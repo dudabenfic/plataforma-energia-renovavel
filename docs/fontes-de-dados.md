@@ -11,7 +11,7 @@ O arquivo [`dados/capitais.csv`](dados/capitais.csv) contém dados oficiais das 
 | `C2` | Potência instalada de geração distribuída solar (kW) ÷ população | ANEEL — Relação de empreendimentos de geração distribuída (tipo UFV) | Arquivo de 03/10/2026 |
 | `C3` | Rendimento nominal médio mensal domiciliar per capita (R$) | IBGE — Censo Demográfico 2022, SIDRA tabela 10295 | 2022 |
 | `C4` | Tarifa residencial B1 convencional vigente (TUSD + TE, R$/kWh, sem impostos e bandeiras) da distribuidora da capital | ANEEL — Tarifas homologadas das distribuidoras | Vigente em 10/2026 |
-| `C5` | Irradiação solar global horizontal média (kWh/m²/dia) | INPE/LABREN — Atlas Brasileiro de Energia Solar, 2ª ed. | **Pendente** (site do LABREN fora do ar na coleta) |
+| `C5` | Irradiação solar global horizontal média anual (kWh/m²/dia) | **Substituta:** NASA POWER, climatologia 2001–2020 (parâmetro ALLSKY_SFC_SW_DWN), pelas coordenadas da capital. Fonte prevista: INPE/LABREN — Atlas Brasileiro de Energia Solar | 2001–2020 |
 | `C6` | % de moradores sem rendimento ou com rendimento domiciliar per capita de até 1/4 de salário mínimo | IBGE — Censo Demográfico 2022, SIDRA tabela 10296 | 2022 |
 | `C7` | Nº de empreendimentos de geração distribuída de fonte renovável (solar, eólica, hidráulica, biomassa e biogás) | ANEEL — Relação de empreendimentos de geração distribuída | Arquivo de 03/10/2026 |
 | `latitude`, `longitude` | Sede municipal | Base `municipios-brasileiros` (código IBGE) | — |
@@ -22,6 +22,7 @@ Links:
 - IBGE — Censo 2022: https://www.ibge.gov.br/estatisticas/sociais/trabalho/22827-censo-demografico-2022.html
 - ANEEL — Geração distribuída: https://dadosabertos.aneel.gov.br/pt_BR/dataset/relacao-de-empreendimentos-de-geracao-distribuida
 - ANEEL — Tarifas: https://dadosabertos.aneel.gov.br/pt_BR/dataset/tarifas-distribuidoras-energia-eletrica
+- NASA POWER (C5, substituta): https://power.larc.nasa.gov
 - INPE — Atlas Brasileiro de Energia Solar: https://labren.ccst.inpe.br/atlas_2017-en.html
 - Coordenadas: https://github.com/kelvins/municipios-brasileiros
 
@@ -34,17 +35,23 @@ Links:
 - O IDH municipal mais recente (PNUD, 2010) não foi incluído; a coluna `idh` fica vazia.
 - Os anos de referência dos indicadores são diferentes; o campo `ano` do CSV (2026) indica o ano da coleta.
 
-## Como incluir C5 (INPE)
+## C5: NASA POWER e troca pelo INPE
 
-1. No Atlas do LABREN, obtenha a irradiação global horizontal média anual de cada capital.
-2. Crie um arquivo com o cabeçalho `codigo_ibge,irradiacao` e uma linha por capital (ex.: `2927408,5.42`).
-3. Gere o CSV de novo informando o arquivo:
+Durante a coleta, o site do LABREN/INPE e o catálogo de dados do INPE estavam fora do ar, e o PDF do Atlas não traz valores por município, apenas mapas e médias regionais. Por isso, C5 foi obtido da NASA POWER, base pública de irradiação derivada de satélite, consultada pelas coordenadas de cada capital:
 
 ```bash
-node scripts/gerar-dados-capitais.js --gd <empreendimento-geracao-distribuida.csv> --irradiacao <irradiacao.csv>
+node scripts/gerar-irradiacao-nasa.js
 ```
 
-Outra opção é importar o CSV atual e depois preencher C5 de cada capital na tela **Municípios → Editar**.
+O script gera `dados/irradiacao-capitais.csv` (código IBGE e valor) e `dados/capitais-c5.csv` (para importar só o C5 na plataforma).
+
+Os valores seguem o padrão do Atlas do INPE: maior irradiação no Nordeste (ex.: Recife 6,05) e menor no Sul (ex.: Florianópolis 4,32).
+
+Para usar os dados do INPE quando o LABREN estiver disponível:
+
+1. Obtenha a irradiação global horizontal média anual de cada capital no Atlas.
+2. Monte um arquivo `codigo_ibge,irradiacao` (mesmo formato de `dados/irradiacao-capitais.csv`).
+3. Importe um CSV `nome,uf,ano,C5` com esses valores (como `dados/capitais-c5.csv`). A importação substitui o C5 anterior, já que o ano é o mesmo.
 
 ## Como gerar novamente
 
