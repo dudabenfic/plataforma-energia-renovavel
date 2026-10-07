@@ -19,7 +19,7 @@ Mostra o resultado da simulação mais recente:
 - total de municípios, critérios ativos, média do coeficiente Ci e número de simulações;
 - município **mais vulnerável** (menor Ci) e **menos vulnerável** (maior Ci);
 - gráfico do ranking, com cores por faixa de vulnerabilidade;
-- mapa com os municípios (vermelho = alta, laranja = média, verde = baixa);
+- mapa com os municípios (vermelho = alta, laranja = média, verde = baixa). Em **Colorir por**, escolha um indicador (C1 a C7) para ver o desempenho de cada município naquele critério;
 - comparação entre até 4 municípios em gráfico de radar e tabela com os valores dos indicadores.
 
 ## 3. Simulação (TOPSIS)
@@ -47,6 +47,7 @@ Na tela de resultado ou no detalhe de uma simulação do histórico:
 ## 5. Municípios
 
 - Lista os municípios com população, IDH e os indicadores C1 a C7 do ano selecionado.
+- **Novo município:** use **Buscar no IBGE** (UF → município → **Preencher dados**) para preencher nome, UF, população estimada e coordenadas automaticamente.
 - **Novo município** / **Editar:** dados do município (nome, UF, população, IDH, latitude e longitude) e valores dos indicadores para um ano de referência.
 - Latitude e longitude são necessárias para o município aparecer no mapa.
 - **Excluir** (administrador): remove também os indicadores e os resultados do município em simulações anteriores.

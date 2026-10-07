@@ -10,13 +10,13 @@ Plataforma web para mensurar indicadores multicritério de vulnerabilidade socia
 
 | Requisito | Funcionalidade |
 |---|---|
-| RF01 | Cadastro, edição, consulta e exclusão de municípios (nome, UF, população, IDH, coordenadas) |
+| RF01 | Cadastro, edição, consulta e exclusão de municípios (nome, UF, população, IDH, coordenadas), com busca na base do IBGE |
 | RF02 | Critérios C1–C7 (tipo, unidade, fonte) e indicadores da matriz de decisão por ano de referência |
 | RF03 | Configuração dos pesos (soma = 100%), com opção de salvar como padrão |
 | RF04 | Execução do TOPSIS e geração do ranking (Ci, D+, D-, posição) |
 | RF05 | Dashboard com indicadores-chave, gráfico do ranking, mapa e comparação entre municípios |
-| RF06 | Relatórios em PDF e CSV (simulação atual ou do histórico) |
-| RF07 | Mapa (Leaflet) com os municípios coloridos por faixa de vulnerabilidade |
+| RF06 | Relatórios em PDF e CSV (na interface e pela API) |
+| RF07 | Mapa (Leaflet) com os municípios coloridos por faixa de vulnerabilidade ou por indicador |
 | RF08 | Cadastro/login com JWT e bcrypt; perfis admin, pesquisador e gestor |
 | RF09 | Importação de dados de fontes externas (IBGE, ANEEL, INPE) por CSV validado |
 | RF10 | Histórico de simulações com filtros, parâmetros, usuário e ranking |
@@ -95,7 +95,7 @@ Fluxo de uma requisição: `routes → middleware (JWT/perfil) → controllers �
 - **Frontend:** React, Vite, Axios, Leaflet/React-Leaflet, Recharts, jsPDF, jsPDF-AutoTable, FileSaver
 - **Backend:** Node.js, Express, Supabase JS, bcryptjs, jsonwebtoken, Multer, csv-parse, Swagger (swagger-jsdoc/swagger-ui-express)
 - **Banco:** PostgreSQL + PostGIS (Supabase)
-- **Testes:** Jest, Supertest
+- **Testes:** Jest, Supertest, Cypress
 - **Deploy:** Vercel (frontend), Render (backend), Docker Compose (local), GitHub Actions (CI)
 
 ## Banco de dados
@@ -182,6 +182,22 @@ npm test               # executa os testes
 npm run test:coverage  # testes + relatório de cobertura (mínimo de 80%)
 ```
 
+Testes de sistema (Cypress), com a API de testes em memória:
+
+```bash
+cd backend && npm run start:e2e
+```
+
+```bash
+cd frontend && VITE_API_URL=http://127.0.0.1:3101 npm run build && npm run preview
+```
+
+```bash
+cd frontend && npm run test:e2e
+```
+
+Validação manual do cálculo: [docs/testes/validacao-topsis.xlsx](docs/testes/validacao-topsis.xlsx). Detalhes e resultados em [docs/testes.md](docs/testes.md).
+
 Os testes de API usam um banco em memória que reproduz a interface do cliente Supabase, sem acessar o banco real. Eles cobrem o algoritmo TOPSIS (incluindo o exemplo B > A > C e 500 alternativas em menos de 3 s), autenticação (cadastro, login, JWT, token ausente/inválido/expirado), perfis, municípios, critérios, indicadores, histórico, relatórios e importação.
 
 ```bash
@@ -224,6 +240,7 @@ Um modelo está disponível em `frontend/public/modelo-importacao.csv`. Dados of
 | POST | `/api/topsis/executar` | Executar TOPSIS |
 | GET | `/api/simulacoes` | Histórico (filtros por usuário, status e período) |
 | GET | `/api/simulacoes/:id` | Detalhes de uma simulação |
+| GET | `/api/relatorios/:id/pdf` | Relatório PDF de uma simulação |
 | GET | `/api/relatorios/:id/csv` | Relatório CSV de uma simulação |
 | POST | `/api/importar-csv` | Importação de dados |
 | GET/PATCH | `/api/usuarios` | Gerenciar usuários (admin) |
@@ -236,3 +253,7 @@ Detalhes, exemplos e códigos de erro no Swagger (`/api-docs`).
 - [Diagramas UML](docs/uml.md)
 - [Manual do usuário](docs/manual-usuario.md)
 - [Fontes de dados das capitais](docs/fontes-de-dados.md)
+- [Testes](docs/testes.md)
+- [Qualidade (ISO/IEC 25010)](docs/qualidade.md)
+- [Gestão do projeto](docs/gestao-projeto.md)
+- [Roteiro da apresentação](docs/apresentacao.md)

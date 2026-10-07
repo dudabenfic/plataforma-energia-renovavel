@@ -48,7 +48,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_criterios_codigo
 
 UPDATE criterios SET fonte = 'IBGE'  WHERE codigo IN ('C1', 'C3', 'C6') AND fonte IS NULL;
 UPDATE criterios SET fonte = 'ANEEL' WHERE codigo IN ('C2', 'C4', 'C7') AND fonte IS NULL;
-UPDATE criterios SET fonte = 'INPE'  WHERE codigo = 'C5' AND fonte IS NULL;
+-- C5: os dados atuais das capitais vêm da NASA POWER (o INPE estava indisponível).
+-- Troque para 'INPE' quando os valores forem substituídos pelos do Atlas.
+UPDATE criterios SET fonte = 'NASA POWER' WHERE codigo = 'C5';
 
 
 -- =========================================================
