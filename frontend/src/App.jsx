@@ -36,7 +36,7 @@ function App() {
   async function carregarSimulacoes() {
   try {
     const resposta = await axios.get(
-      "http://127.0.0.1:3001/api/simulacoes"
+      `${import.meta.env.VITE_API_URL}/api/simulacoes`
     );
 
     setSimulacoes(resposta.data.simulacoes);
@@ -48,7 +48,7 @@ function App() {
   async function executarTopsis() {
     try {
       const resposta = await axios.post(
-        "http://127.0.0.1:3001/api/topsis/executar",
+        `${import.meta.env.VITE_API_URL}/api/topsis/executar`,
         {
           pesos
         }
@@ -94,7 +94,7 @@ function App() {
 
     try {
       const resposta = await axios.post(
-        "http://127.0.0.1:3001/api/importar-csv",
+        `${import.meta.env.VITE_API_URL}/api/importar-csv`,
         formulario
       );
 
