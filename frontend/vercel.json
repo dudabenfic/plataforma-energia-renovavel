@@ -1,0 +1,4 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "CYPRESS_INSTALL_BINARY=0 npm install"
+}

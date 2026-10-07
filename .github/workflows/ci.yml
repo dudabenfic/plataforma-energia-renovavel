@@ -27,6 +27,8 @@ jobs:
     defaults:
       run:
         working-directory: frontend
+    env:
+      CYPRESS_INSTALL_BINARY: 0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -37,3 +39,60 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+
+  # Testes de sistema (Cypress) contra a API com banco em memória.
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+        working-directory: backend
+      - run: npm ci
+        working-directory: frontend
+      - name: API de testes (porta 3101)
+        run: npm run start:e2e &
+        working-directory: backend
+      - name: Build e preview do frontend
+        working-directory: frontend
+        env:
+          VITE_API_URL: http://127.0.0.1:3101
+        run: |
+          npm run build
+          npm run preview -- --port 4173 --strictPort &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:3101/ > /dev/null && curl -sf http://localhost:4173/ > /dev/null && exit 0
+            sleep 1
+          done
+          exit 1
+      - run: npm run test:e2e
+        working-directory: frontend
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: frontend/cypress/screenshots
+
+  # Docker Compose: monta as imagens e confirma que API e frontend sobem.
+  docker:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Variáveis fictícias (a rota / não acessa o banco)
+        run: |
+          printf "SUPABASE_URL=http://localhost\nSUPABASE_KEY=ci\nJWT_SECRET=ci\n" > backend/.env
+      - run: docker compose up -d --build
+      - name: Verifica os serviços
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3001/ && curl -sf http://localhost:8080/ > /dev/null && exit 0
+            sleep 2
+          done
+          docker compose logs
+          exit 1
+      - if: always()
+        run: docker compose down

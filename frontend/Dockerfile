@@ -4,6 +4,8 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
+# O Cypress (testes) não é necessário na imagem.
+ENV CYPRESS_INSTALL_BINARY=0
 RUN npm ci
 
 COPY . .
