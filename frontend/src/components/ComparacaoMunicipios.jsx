@@ -10,22 +10,10 @@ import {
   Tooltip
 } from "recharts";
 import { formatarNumero, nomeTipo } from "../utils/formatacao";
+import { desempenho } from "../utils/indicadores";
 
 const CORES = ["#0f766e", "#2563eb", "#d97706", "#9333ea"];
 const MAXIMO = 4;
-
-// Desempenho de 0 a 1 em cada critério (1 = melhor valor entre os municípios).
-// Benefício: (v - min) / (max - min). Custo: (max - v) / (max - min).
-function desempenho(valor, valores, tipo) {
-  const minimo = Math.min(...valores);
-  const maximo = Math.max(...valores);
-
-  if (maximo === minimo) return 1;
-
-  return tipo === "beneficio"
-    ? (valor - minimo) / (maximo - minimo)
-    : (maximo - valor) / (maximo - minimo);
-}
 
 function ComparacaoMunicipios({ municipios, criterios }) {
   const comDados = municipios.filter((m) => Object.keys(m.valores ?? {}).length > 0);

@@ -125,7 +125,7 @@ function DashboardPage() {
 
         <section className="panel">
           <h3>Mapa de vulnerabilidade</h3>
-          <MapView municipios={dados.municipios} ranking={ranking} altura={380} />
+          <MapView municipios={dados.municipios} ranking={ranking} criterios={dados.criterios} altura={380} />
         </section>
       </div>
 

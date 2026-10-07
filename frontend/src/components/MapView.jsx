@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -14,7 +14,8 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-import { FAIXAS, faixaVulnerabilidade, formatarCi, formatarNumero } from "../utils/formatacao";
+import { FAIXAS, faixaVulnerabilidade, formatarCi, formatarNumero, nomeTipo } from "../utils/formatacao";
+import { desempenho } from "../utils/indicadores";
 
 // Corrige os ícones padrão do Leaflet no build do Vite.
 delete L.Icon.Default.prototype._getIconUrl;
@@ -26,6 +27,17 @@ L.Icon.Default.mergeOptions({
 });
 
 const CENTRO_BRASIL = [-14.235, -51.9253];
+
+// Cores da camada por indicador (pior, intermediário, melhor desempenho).
+const FAIXAS_INDICADOR = [
+  { rotulo: "Pior desempenho no critério", minimo: 0, cor: FAIXAS[0].cor },
+  { rotulo: "Intermediário", minimo: 1 / 3, cor: FAIXAS[1].cor },
+  { rotulo: "Melhor desempenho no critério", minimo: 2 / 3, cor: FAIXAS[2].cor }
+];
+
+function corDoDesempenho(valor) {
+  return [...FAIXAS_INDICADOR].reverse().find((faixa) => valor >= faixa.minimo).cor;
+}
 
 function temCoordenadas(municipio) {
   return (
@@ -46,29 +58,73 @@ function AjustarEnquadramento({ pontos }) {
   useEffect(() => {
     const pontos = JSON.parse(chave);
 
+    // Sem animação: se o usuário trocar de página durante a animação,
+    // o Leaflet tentaria mover um mapa já removido da tela.
     if (pontos.length === 1) {
-      map.setView(pontos[0], 8);
+      map.setView(pontos[0], 8, { animate: false });
     } else if (pontos.length > 1) {
-      map.fitBounds(pontos, { padding: [40, 40], maxZoom: 9 });
+      map.fitBounds(pontos, { padding: [40, 40], maxZoom: 9, animate: false });
     }
   }, [map, chave]);
 
   return null;
 }
 
-// RF07 — municípios no mapa, coloridos pela faixa de vulnerabilidade
-// quando há resultado de ranking.
-function MapView({ municipios = [], ranking = [], altura = 450 }) {
+// RF07 — municípios no mapa. A camada "Ci" colore pela faixa de
+// vulnerabilidade do ranking; as camadas C1 a C7 colorem pelo desempenho
+// relativo no indicador (requer municípios com o campo "valores").
+function MapView({ municipios = [], ranking = [], criterios = [], altura = 450 }) {
+  const [camada, setCamada] = useState("ci");
+
   const rankingPorMunicipio = new Map(
     ranking.map((resultado) => [resultado.municipio_id, resultado])
   );
+
+  const criterio = criterios.find((c) => String(c.id) === camada);
+  const valoresDoCriterio = criterio
+    ? municipios
+        .map((m) => m.valores?.[criterio.id])
+        .filter((v) => v !== undefined)
+    : [];
 
   const comCoordenadas = municipios.filter(temCoordenadas);
   const semCoordenadas = municipios.length - comCoordenadas.length;
   const pontos = comCoordenadas.map((m) => [Number(m.latitude), Number(m.longitude)]);
 
+  function corDoMunicipio(municipio) {
+    if (criterio) {
+      const valor = municipio.valores?.[criterio.id];
+      return valor === undefined
+        ? null
+        : corDoDesempenho(desempenho(valor, valoresDoCriterio, criterio.tipo));
+    }
+
+    const resultado = rankingPorMunicipio.get(municipio.id);
+    return resultado ? faixaVulnerabilidade(resultado.ci).cor : null;
+  }
+
+  const legenda = criterio
+    ? FAIXAS_INDICADOR
+    : ranking.length > 0
+      ? FAIXAS
+      : [];
+
   return (
     <div>
+      {criterios.length > 0 && (
+        <label className="campo campo-inline seletor-camada">
+          Colorir por
+          <select value={camada} onChange={(e) => setCamada(e.target.value)}>
+            <option value="ci">Ci do ranking (vulnerabilidade)</option>
+            {criterios.map((c) => (
+              <option key={c.id} value={String(c.id)}>
+                {c.codigo} · {c.nome}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
       <div className="mapa" style={{ height: altura }}>
         <MapContainer center={CENTRO_BRASIL} zoom={4} scrollWheelZoom={false}>
           <TileLayer
@@ -81,14 +137,30 @@ function MapView({ municipios = [], ranking = [], altura = 450 }) {
           {comCoordenadas.map((municipio) => {
             const resultado = rankingPorMunicipio.get(municipio.id);
             const posicao = [Number(municipio.latitude), Number(municipio.longitude)];
+            const cor = corDoMunicipio(municipio);
+            const valor = criterio ? municipio.valores?.[criterio.id] : undefined;
 
             const conteudo = (
               <Popup>
                 <strong>{municipio.nome} - {municipio.uf}</strong>
                 <br />
                 População: {formatarNumero(municipio.populacao, 0)}
-                <br />
-                IDH: {formatarNumero(municipio.idh, 3)}
+                {municipio.idh !== null && municipio.idh !== undefined && (
+                  <>
+                    <br />
+                    IDH: {formatarNumero(municipio.idh, 3)}
+                  </>
+                )}
+                {criterio && (
+                  <>
+                    <br />
+                    <br />
+                    <strong>{criterio.codigo} · {criterio.nome}</strong>
+                    <br />
+                    Valor: {formatarNumero(valor, 4)}
+                    {criterio.unidade ? ` ${criterio.unidade}` : ""} ({nomeTipo(criterio.tipo)})
+                  </>
+                )}
                 {resultado && (
                   <>
                     <br />
@@ -103,15 +175,13 @@ function MapView({ municipios = [], ranking = [], altura = 450 }) {
               </Popup>
             );
 
-            if (!resultado) {
+            if (!cor) {
               return (
                 <Marker key={municipio.id} position={posicao}>
                   {conteudo}
                 </Marker>
               );
             }
-
-            const cor = faixaVulnerabilidade(resultado.ci).cor;
 
             return (
               <CircleMarker
@@ -128,12 +198,16 @@ function MapView({ municipios = [], ranking = [], altura = 450 }) {
       </div>
 
       <div className="legenda">
-        {ranking.length > 0 &&
-          FAIXAS.map((faixa) => (
-            <span key={faixa.chave}>
-              <i style={{ background: faixa.cor }} /> {faixa.rotulo}
-            </span>
-          ))}
+        {legenda.map((faixa) => (
+          <span key={faixa.rotulo}>
+            <i style={{ background: faixa.cor }} /> {faixa.rotulo}
+          </span>
+        ))}
+        {criterio && (
+          <span className="texto-suave">
+            {criterio.tipo === "beneficio" ? "Maior valor é melhor." : "Menor valor é melhor."}
+          </span>
+        )}
         {semCoordenadas > 0 && (
           <span className="texto-suave">
             {semCoordenadas} município(s) sem coordenadas não aparecem no mapa.

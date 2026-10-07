@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api, { mensagemDeErro } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
 import { Alerta, Carregando, Vazio } from "../components/Feedback";
+import BuscaIbge from "../components/BuscaIbge";
 import { formatarNumero } from "../utils/formatacao";
 
 const VAZIO = { nome: "", uf: "", populacao: "", idh: "", latitude: "", longitude: "" };
@@ -156,6 +157,17 @@ function MunicipiosPage() {
       {edicao && (
         <form className="panel" onSubmit={salvar}>
           <h3>{edicao.id ? "Editar município" : "Novo município"}</h3>
+
+          {!edicao.id && (
+            <BuscaIbge
+              aoSelecionar={(dados) =>
+                setEdicao((atual) => ({
+                  ...atual,
+                  dados: { ...atual.dados, ...dados, populacao: String(dados.populacao), latitude: String(dados.latitude), longitude: String(dados.longitude) }
+                }))
+              }
+            />
+          )}
 
           <div className="grade-formulario">
             <label className="campo">
