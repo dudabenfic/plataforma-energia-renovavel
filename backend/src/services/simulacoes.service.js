@@ -123,40 +123,4 @@ async function buscarDetalhes(id) {
   return { simulacao: comUsuario, ranking };
 }
 
-function celulaCsv(valor) {
-  const texto = valor === null || valor === undefined ? "" : String(valor);
-
-  return /[",;\n]/.test(texto) ? `"${texto.replace(/"/g, '""')}"` : texto;
-}
-
-// Relatório CSV (RF06) gerado no servidor a partir de uma simulação salva.
-async function gerarCsv(id) {
-  const { simulacao, ranking } = await buscarDetalhes(id);
-
-  const linhas = [
-    [
-      "posicao",
-      "municipio",
-      "uf",
-      "coeficiente_ci",
-      "distancia_positiva",
-      "distancia_negativa",
-      "simulacao_id",
-      "data_execucao"
-    ],
-    ...ranking.map((item) => [
-      item.posicao,
-      item.municipio,
-      item.uf,
-      item.coeficiente_ci.toFixed(6),
-      item.distancia_positiva.toFixed(6),
-      item.distancia_negativa.toFixed(6),
-      simulacao.id,
-      simulacao.data_execucao
-    ])
-  ];
-
-  return "﻿" + linhas.map((linha) => linha.map(celulaCsv).join(",")).join("\n");
-}
-
-module.exports = { listar, buscarDetalhes, gerarCsv };
+module.exports = { listar, buscarDetalhes };

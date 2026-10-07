@@ -131,3 +131,38 @@ describe("GET /api/relatorios/:id/csv", () => {
     expect((await get("/api/relatorios/999/csv")).statusCode).toBe(404);
   });
 });
+
+describe("GET /api/relatorios/:id/pdf", () => {
+  function baixarPdf(url) {
+    return get(url)
+      .buffer(true)
+      .parse((resposta, callback) => {
+        const partes = [];
+        resposta.on("data", (parte) => partes.push(parte));
+        resposta.on("end", () => callback(null, Buffer.concat(partes)));
+      });
+  }
+
+  test("gera o PDF de uma simulação nova (com critérios nos parâmetros)", async () => {
+    const id = await novaSimulacao();
+    const resposta = await baixarPdf(`/api/relatorios/${id}/pdf`);
+
+    expect(resposta.statusCode).toBe(200);
+    expect(resposta.headers["content-type"]).toContain("application/pdf");
+    expect(resposta.headers["content-disposition"]).toContain(`relatorio-simulacao-${id}.pdf`);
+    expect(resposta.body.subarray(0, 5).toString()).toBe("%PDF-");
+    expect(resposta.body.length).toBeGreaterThan(2000);
+  });
+
+  test("gera o PDF de uma simulação antiga (só pesos e tipos)", async () => {
+    const resposta = await baixarPdf("/api/relatorios/1/pdf");
+
+    expect(resposta.statusCode).toBe(200);
+    expect(resposta.body.subarray(0, 5).toString()).toBe("%PDF-");
+  });
+
+  test("404 para simulação inexistente e 401 sem token", async () => {
+    expect((await get("/api/relatorios/999/pdf")).statusCode).toBe(404);
+    expect((await request(app).get("/api/relatorios/1/pdf")).statusCode).toBe(401);
+  });
+});
