@@ -204,7 +204,7 @@ Município A,BA,2026,100000,0.7,-12.9711,-38.5014,15,0.8,980,0.75,5.2,18,4
 - O arquivo inteiro é validado antes da gravação; se houver erro, nada é importado e os erros são listados por linha.
 - Municípios existentes (mesmo nome e UF) são atualizados.
 
-Um modelo está disponível em `frontend/public/modelo-importacao.csv`. As fontes oficiais de cada indicador estão listadas na tela de importação e em [docs/manual-usuario.md](docs/manual-usuario.md).
+Um modelo está disponível em `frontend/public/modelo-importacao.csv`. Dados oficiais das 27 capitais (IBGE e ANEEL) estão em `docs/dados/capitais.csv`, gerados por `backend/scripts/gerar-dados-capitais.js` (ver [fontes de dados](docs/fontes-de-dados.md)). As fontes oficiais de cada indicador estão listadas na tela de importação e em [docs/manual-usuario.md](docs/manual-usuario.md).
 
 ## Principais endpoints
 
@@ -235,3 +235,4 @@ Detalhes, exemplos e códigos de erro no Swagger (`/api-docs`).
 - [Requisitos e rastreabilidade](docs/requisitos.md)
 - [Diagramas UML](docs/uml.md)
 - [Manual do usuário](docs/manual-usuario.md)
+- [Fontes de dados das capitais](docs/fontes-de-dados.md)
