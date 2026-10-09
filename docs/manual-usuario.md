@@ -1,18 +1,5 @@
 # Manual do usuário
 
-## Contas de demonstração
-
-Site: https://plataforma-energia-renovavel.vercel.app/
-
-| Perfil | E-mail | O que pode fazer |
-|---|---|---|
-| Administrador | `professor.admin@energia.test` | Tudo: cadastros, exclusões, critérios, importação, simulações, relatórios e gerenciamento de usuários |
-| Gestor público | `professor.gestor@energia.test` | Consultar dados, executar simulações e gerar relatórios (sem cadastrar ou alterar dados) |
-
-Novas contas criadas pela tela **Criar conta** recebem o perfil **pesquisador**.
-
-> As senhas são enviadas ao professor separadamente e não ficam no repositório.
-
 ## 1. Acesso
 
 1. Acesse a aplicação e clique em **Criar conta**.

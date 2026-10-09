@@ -6,16 +6,9 @@ Plataforma web para mensurar indicadores multicritério de vulnerabilidade socia
 - **API:** https://plataforma-energia-renovavel.onrender.com/
 - **Documentação da API (Swagger):** https://plataforma-energia-renovavel.onrender.com/api-docs
 
-## Contas de demonstração
+## Acesso
 
-| Perfil | E-mail | O que pode fazer |
-|---|---|---|
-| Administrador | `professor.admin@energia.test` | Tudo: cadastros, exclusões, critérios, importação, simulações, relatórios e gerenciamento de usuários |
-| Gestor público | `professor.gestor@energia.test` | Consultar dados, executar simulações e gerar relatórios (sem cadastrar ou alterar dados) |
-
-Novas contas criadas pela tela **Criar conta** recebem o perfil **pesquisador**.
-
-> As senhas são enviadas ao professor separadamente e não ficam no repositório.
+Para acessar, crie uma conta em **Criar conta** na tela inicial. Novas contas recebem o perfil **pesquisador**.
 
 ## Funcionalidades
 
