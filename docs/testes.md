@@ -73,4 +73,5 @@ Os testes E2E encontraram um erro real no mapa (troca de página durante a anima
 | Importação do CSV das 27 capitais | ✅ |
 | Interface em 375 px (celular) sem rolagem horizontal | ✅ |
 | Safari | ✅ |
-| Firefox | ⬜ a verificar |
+| Firefox | ✅ |
+| Brave | ✅ |

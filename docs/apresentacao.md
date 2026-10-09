@@ -15,7 +15,7 @@ Sugestão para slides + demonstração ao vivo (~15 minutos).
 9. **Segurança** — JWT + bcrypt, perfis (admin, pesquisador, gestor), RLS no banco.
 10. **Dados reais** — 27 capitais: fontes e anos ([fontes-de-dados.md](fontes-de-dados.md)); observação sobre C1 e sobre C5.
 11. **Qualidade e testes** — 139 testes (99% de cobertura), 8 testes de sistema (Cypress), TOPSIS em 0,8 ms para 500 municípios, CI no GitHub Actions ([testes.md](testes.md), [qualidade.md](qualidade.md)).
-12. **Limitações e próximos passos** — disponibilidade do plano gratuito; C5 do INPE; IDH municipal; testes em outros navegadores.
+12. **Limitações e próximos passos** — disponibilidade do plano gratuito; C5 do INPE; IDH municipal.
 13. **Demonstração ao vivo.**
 
 ## Demonstração (roteiro)
