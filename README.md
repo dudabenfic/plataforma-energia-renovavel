@@ -8,14 +8,14 @@ Plataforma web para mensurar indicadores multicritério de vulnerabilidade socia
 
 ## Contas de demonstração
 
-| Perfil | E-mail | Senha | O que pode fazer |
-|---|---|---|---|
-| Administrador | `professor.admin@energia.test` | `fzaQa0AWXWuN` | Tudo: cadastros, exclusões, critérios, importação, simulações, relatórios e gerenciamento de usuários |
-| Gestor público | `professor.gestor@energia.test` | `INzl4VR6CmSo` | Consultar dados, executar simulações e gerar relatórios (sem cadastrar ou alterar dados) |
+| Perfil | E-mail | O que pode fazer |
+|---|---|---|
+| Administrador | `professor.admin@energia.test` | Tudo: cadastros, exclusões, critérios, importação, simulações, relatórios e gerenciamento de usuários |
+| Gestor público | `professor.gestor@energia.test` | Consultar dados, executar simulações e gerar relatórios (sem cadastrar ou alterar dados) |
 
 Novas contas criadas pela tela **Criar conta** recebem o perfil **pesquisador**.
 
-> As senhas acima são apenas para demonstração e avaliação. Se o repositório se tornar público, altere-as antes.
+> As senhas são enviadas ao professor separadamente e não ficam no repositório.
 
 ## Funcionalidades
 
