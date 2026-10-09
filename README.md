@@ -256,4 +256,3 @@ Detalhes, exemplos e códigos de erro no Swagger (`/api-docs`).
 - [Testes](docs/testes.md)
 - [Qualidade (ISO/IEC 25010)](docs/qualidade.md)
 - [Gestão do projeto](docs/gestao-projeto.md)
-- [Roteiro da apresentação](docs/apresentacao.md)
