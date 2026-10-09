@@ -10,7 +10,7 @@ Metas do Cap. 11 do documento de referência e a situação do projeto.
 | Confiabilidade | Disponibilidade | Uptime mensal | ≥ 99,5% | **Não garantido**: no plano gratuito do Render a API hiberna após inatividade (primeira resposta pode levar ~50 s). Frontend (Vercel) e banco (Supabase) são serviços gerenciados | — |
 | Segurança | Confidencialidade | Dados protegidos por autenticação | 100% | **100%** das rotas de dados exigem JWT; senhas com bcrypt; RLS no banco bloqueia a chave pública | `auth.test.js`, migration 002 |
 | Manutenibilidade | Modularidade | Acoplamento entre módulos | Baixo | Camadas separadas (rotas → controllers → services → domínio/repositórios); TOPSIS sem dependência de banco ou HTTP; 99% de cobertura | [README](../README.md#arquitetura) |
-| Portabilidade | Adaptabilidade | Funciona em 3+ navegadores | Chrome, Firefox, Safari | Chrome e Electron (Cypress) verificados; Firefox e Safari **a verificar** | [testes.md](testes.md) |
+| Portabilidade | Adaptabilidade | Funciona em 3+ navegadores | Chrome, Firefox, Safari | Chrome, Safari e Electron (Cypress) verificados; Firefox **a verificar** | [testes.md](testes.md) |
 
 ## Demais características
 
